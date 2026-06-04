@@ -18,6 +18,7 @@ import {
   BookOpen,
   Star,
   Download,
+  Home,
 } from "lucide-react";
 import quizLogo from "../assets/quizLogo.png";
 
@@ -28,7 +29,7 @@ const css = `
   /* ── TOP NAV ── */
   .top-nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-    display: flex; align-items: center;
+    display: flex; align-items: center; justify-content: space-between;
     padding: 0 3.5rem; height: 66px;
     background: rgba(253,254,254,0.75);
     backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
@@ -41,28 +42,79 @@ const css = `
   }
   .top-nav img { height: 115px; width: auto; display: block; }
 
+  .nav-right { display: flex; align-items: center; gap: 1.5rem; }
+  .logout-btn {
+    display: flex; align-items: center; gap: 7px;
+    padding: 8px 20px; background: #1C2B30; color: #fff;
+    border: none; border-radius: 40px; font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: 'Mulish', sans-serif; transition: all 0.2s;
+  }
+  .logout-btn:hover { background: #2A3D45; transform: translateY(-1px); }
+
   /* ── LAYOUT ── */
   .layout { display: flex; padding-top: 66px; min-height: 100vh; }
 
-  /* ── SIDEBAR ── */
+  /* ── SIDEBAR FIXED STACK ── */
   .sidebar {
-    width: 240px; min-height: calc(100vh - 66px);
+    width: 240px; height: calc(100vh - 66px);
     background: #1C2B30;
     position: fixed; top: 66px; left: 0; bottom: 0;
-    display: flex; flex-direction: column; z-index: 100;
+    z-index: 100;
+    padding: 24px 16px;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
   }
-  .sidebar-user { padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid rgba(235,245,238,0.08); }
-  .sidebar-avatar { width: 40px; height: 40px; border-radius: 50%; background: rgba(235,245,238,0.12); display: flex; align-items: center; justify-content: center; margin-bottom: 10px; color: #EBF5EE; }
-  .sidebar-name { font-size: 14px; font-weight: 600; color: #EBF5EE; margin-bottom: 2px; }
-  .sidebar-email { font-size: 11px; color: rgba(235,245,238,0.4); word-break: break-all; }
-  .sidebar-role-badge { display: inline-block; margin-top: 8px; padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; background: rgba(153,60,29,0.2); color: #E8997A; border: 1px solid rgba(153,60,29,0.3); }
-  .sidebar-nav { flex: 1; padding: 1rem 0; overflow-y: auto; }
-  .nav-item { display: flex; align-items: center; gap: 11px; padding: 11px 1.5rem; font-size: 14px; font-weight: 500; color: rgba(235,245,238,0.5); cursor: pointer; border-left: 3px solid transparent; transition: all 0.15s; }
+  
+  .sidebar-user { 
+    display: block !important;
+    width: 100%;
+    padding-bottom: 20px; 
+    border-bottom: 1px solid rgba(235,245,238,0.08);
+    margin-bottom: 24px;
+    flex-shrink: 0;
+  }
+  .sidebar-avatar { width: 44px; height: 44px; border-radius: 50%; background: rgba(235,245,238,0.12); display: flex; align-items: center; justify-content: center; margin-bottom: 12px; color: #EBF5EE; }
+  .sidebar-name { font-size: 15px; font-weight: 600; color: #EBF5EE; margin-bottom: 4px; display: block; line-height: 1.2; }
+  .sidebar-email { font-size: 12px; color: rgba(235,245,238,0.4); margin-bottom: 12px; display: block; word-break: break-all; line-height: 1.2; }
+  .sidebar-role-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; background: rgba(153,60,29,0.2); color: #E8997A; border: 1px solid rgba(153,60,29,0.3); }
+  
+  .sidebar-nav { 
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100%;
+    margin-top: 0px;
+  }
+  
+  .nav-item { 
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 14px !important; 
+    padding: 12px 16px !important; 
+    font-size: 15px; 
+    font-weight: 500; 
+    color: rgba(235,245,238,0.5); 
+    cursor: pointer; 
+    background: transparent;
+    border: none; 
+    width: 100%; 
+    border-radius: 12px;
+    font-family: 'Mulish', sans-serif; 
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
   .nav-item:hover { color: #EBF5EE; background: rgba(235,245,238,0.05); }
-  .nav-item.active { color: #EBF5EE; border-left-color: #E8997A; background: rgba(235,245,238,0.07); }
-  .sidebar-bottom { padding: 1rem 1.5rem; border-top: 1px solid rgba(235,245,238,0.08); }
-  .logout-btn { display: flex; align-items: center; gap: 9px; width: 100%; padding: 10px 13px; background: rgba(235,245,238,0.06); border: 1px solid rgba(235,245,238,0.1); border-radius: 9px; color: rgba(235,245,238,0.6); font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Mulish', sans-serif; transition: all 0.15s; }
-  .logout-btn:hover { background: rgba(235,245,238,0.1); color: #EBF5EE; }
+  .nav-item.active { 
+    color: #EBF5EE; 
+    background: rgba(253,254,254,0.1); 
+    font-weight: 600; 
+  }
+  .nav-item svg { flex-shrink: 0 !important; color: inherit; display: block !important; }
+  .nav-item span { display: inline-block !important; color: inherit; white-space: nowrap; line-height: 1; }
 
   /* ── MAIN ── */
   .main { margin-left: 240px; flex: 1; padding: 2.5rem; }
@@ -144,7 +196,6 @@ const css = `
   .sub-panel-title { font-size: 13px; font-weight: 600; color: #2A3D45; margin-bottom: 0.75rem; }
 `;
 
-// ── helpers ──────────────────────────────────────────────
 function newQuestionDraft() {
   return { id: Date.now(), text: "", options: ["", "", "", ""], correct: 0 };
 }
@@ -155,17 +206,15 @@ export default function Admin() {
   const [currentUser, setCurrentUser] = useState(null);
   const [profile, setProfile] = useState(null);
 
-  // data from Supabase
   const [teachers, setTeachers] = useState([]);
   const [students, setStudents] = useState([]);
   const [quizzes, setQuizzes] = useState([]);
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // user modal
   const [showUserModal, setShowUserModal] = useState(false);
-  const [modalRole, setModalRole] = useState("teacher"); // "teacher" | "student"
-  const [editTarget, setEditTarget] = useState(null); // profile object when editing
+  const [modalRole, setModalRole] = useState("teacher");
+  const [editTarget, setEditTarget] = useState(null);
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
@@ -176,7 +225,6 @@ export default function Admin() {
   const [userSuccess, setUserSuccess] = useState("");
   const [userLoading, setUserLoading] = useState(false);
 
-  // quiz modal
   const [showQuizModal, setShowQuizModal] = useState(false);
   const [quizDraft, setQuizDraft] = useState({
     title: "",
@@ -187,11 +235,9 @@ export default function Admin() {
   const [quizError, setQuizError] = useState("");
   const [quizLoading, setQuizLoading] = useState(false);
 
-  // student grades drawer
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [studentGrades, setStudentGrades] = useState([]);
 
-  // ── init ──────────────────────────────────────────────
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) return;
@@ -243,7 +289,6 @@ export default function Admin() {
     navigate("/login");
   }
 
-  // ── CREATE / EDIT USER ────────────────────────────────
   function openAddUser(role) {
     setModalRole(role);
     setEditTarget(null);
@@ -271,7 +316,6 @@ export default function Admin() {
     setUserSuccess("");
     setUserLoading(true);
 
-    // ── EDIT mode ──
     if (editTarget) {
       const { error } = await supabase
         .from("profiles")
@@ -288,7 +332,6 @@ export default function Admin() {
       return;
     }
 
-    // ── CREATE mode ──
     if (!formData.full_name || !formData.email || !formData.password) {
       setUserError("All fields are required.");
       setUserLoading(false);
@@ -300,14 +343,11 @@ export default function Admin() {
       return;
     }
 
-    // use supabaseAdmin to bypass the "already logged in" restriction
     const { data, error: authErr } = await supabaseAdmin.auth.admin.createUser({
       email: formData.email,
       password: formData.password,
-      email_confirm: true, // auto-confirms so no email needed
+      email_confirm: true,
     });
-
-    console.log("Admin createUser result:", data, authErr);
 
     if (authErr) {
       setUserError(authErr.message);
@@ -320,7 +360,6 @@ export default function Admin() {
       return;
     }
 
-    // insert profile row directly
     const { error: profErr } = await supabase.from("profiles").upsert({
       id: data.user.id,
       full_name: formData.full_name,
@@ -346,12 +385,10 @@ export default function Admin() {
   }
 
   async function deleteUser(id) {
-    // Remove from profiles (auth user stays but loses access — acceptable for now)
     const { error } = await supabase.from("profiles").delete().eq("id", id);
     if (!error) await loadAll();
   }
 
-  // ── QUIZZES ───────────────────────────────────────────
   function openCreateQuiz() {
     setQuizDraft({
       title: "",
@@ -387,7 +424,6 @@ export default function Admin() {
       return;
     }
 
-    // insert questions
     const questionRows = quizDraft.questions
       .filter((q) => q.text.trim())
       .map((q, i) => ({
@@ -421,7 +457,6 @@ export default function Admin() {
     await loadAll();
   }
 
-  // ── STUDENT GRADES ────────────────────────────────────
   async function viewStudentGrades(student) {
     setSelectedStudent(student);
     const { data } = await supabase
@@ -432,7 +467,6 @@ export default function Admin() {
     setStudentGrades(data || []);
   }
 
-  // ── STATS ─────────────────────────────────────────────
   const avgScore = submissions.length
     ? Math.round(
         submissions.reduce((a, s) => a + (s.score / s.total) * 100, 0) /
@@ -440,11 +474,13 @@ export default function Admin() {
       )
     : 0;
 
+  /* Exchanged the position of quizzes and grades objects inside tracking array */
   const navItems = [
-    { id: "dashboard", label: "Dashboard", icon: <BarChart2 size={16} /> },
-    { id: "teachers", label: "Teachers", icon: <UserCheck size={16} /> },
-    { id: "students", label: "Students", icon: <Users size={16} /> },
-    { id: "quizzes", label: "Quizzes", icon: <ClipboardList size={16} /> },
+    { id: "dashboard", label: "Dashboard", icon: <Home size={20} /> },
+    { id: "teachers",  label: "Teachers",  icon: <UserCheck size={20} /> },
+    { id: "students",  label: "Students",  icon: <Users size={20} /> },
+    { id: "grades",    label: "Grades",    icon: <Star size={20} /> },
+    { id: "quizzes",   label: "Quizzes",   icon: <ClipboardList size={20} /> },
   ];
 
   return (
@@ -458,10 +494,15 @@ export default function Admin() {
       {/* ── TOP NAV ── */}
       <nav className="top-nav">
         <img src={quizLogo} alt="EduQuiz" />
+        <div className="nav-right">
+          <button className="logout-btn" onClick={logout}>
+            <LogOut size={14} /> Sign out
+          </button>
+        </div>
       </nav>
 
       <div className="layout">
-        {/* ── SIDEBAR ── */}
+        {/* ── SIDEBAR FIXED STACK ── */}
         <aside className="sidebar">
           <div className="sidebar-user">
             <div className="sidebar-avatar">
@@ -473,21 +514,21 @@ export default function Admin() {
             <div className="sidebar-email">{currentUser?.email}</div>
             <span className="sidebar-role-badge">Admin</span>
           </div>
-          <nav className="sidebar-nav">
+          
+          <div className="sidebar-nav">
             {navItems.map((item) => (
-              <div
+              <button
                 key={item.id}
                 className={`nav-item ${tab === item.id ? "active" : ""}`}
-                onClick={() => setTab(item.id)}
+                onClick={() => {
+                  setTab(item.id);
+                  if (item.id === "students") setSelectedStudent(null);
+                }}
               >
-                {item.icon} {item.label}
-              </div>
+                {item.icon}
+                <span>{item.label}</span>
+              </button>
             ))}
-          </nav>
-          <div className="sidebar-bottom">
-            <button className="logout-btn" onClick={logout}>
-              <LogOut size={15} /> Se déconnecter
-            </button>
           </div>
         </aside>
 
@@ -551,13 +592,7 @@ export default function Admin() {
                       }}
                     >
                       <div>
-                        <div
-                          style={{
-                            fontSize: 13,
-                            fontWeight: 600,
-                            color: "#2A3D45",
-                          }}
-                        >
+                        <div style={{ fontSize: 13, fontWeight: 600, color: "#2A3D45" }}>
                           {t.full_name}
                         </div>
                         <div style={{ fontSize: 11, color: "#A8BFBF" }}>
@@ -593,13 +628,7 @@ export default function Admin() {
                       }}
                     >
                       <div>
-                        <div
-                          style={{
-                            fontSize: 13,
-                            fontWeight: 600,
-                            color: "#2A3D45",
-                          }}
-                        >
+                        <div style={{ fontSize: 13, fontWeight: 600, color: "#2A3D45" }}>
                           {s.full_name}
                         </div>
                         <div style={{ fontSize: 11, color: "#A8BFBF" }}>
@@ -623,9 +652,7 @@ export default function Admin() {
               <div className="page-header">
                 <div>
                   <h1 className="page-title">Teachers</h1>
-                  <p className="page-sub">
-                    Add, edit, and remove teacher accounts.
-                  </p>
+                  <p className="page-sub">Add, edit, and remove teacher accounts.</p>
                 </div>
                 <button
                   className="btn btn-primary"
@@ -688,9 +715,7 @@ export default function Admin() {
               <div className="page-header">
                 <div>
                   <h1 className="page-title">Students</h1>
-                  <p className="page-sub">
-                    Add, edit, remove students — and view their grades.
-                  </p>
+                  <p className="page-sub">Add, edit, remove students — and view their grades.</p>
                 </div>
                 <button
                   className="btn btn-primary"
@@ -717,24 +742,15 @@ export default function Admin() {
                     </thead>
                     <tbody>
                       {students.map((s) => {
-                        const stuSubs = submissions.filter(
-                          (sub) => sub.student?.email === s.email,
-                        );
                         return (
                           <tr key={s.id}>
                             <td style={{ fontWeight: 600 }}>{s.full_name}</td>
-                            <td style={{ color: "#5B7C88" }}>
-                              {s.email || "—"}
-                            </td>
+                            <td style={{ color: "#5B7C88" }}>{s.email || "—"}</td>
                             <td style={{ color: "#A8BFBF" }}>
                               {new Date(s.created_at).toLocaleDateString()}
                             </td>
                             <td>
-                              {
-                                submissions.filter(
-                                  (sub) => sub.student_id === s.id,
-                                ).length
-                              }
+                              {submissions.filter((sub) => sub.student_id === s.id).length}
                             </td>
                             <td>
                               <button
@@ -769,7 +785,7 @@ export default function Admin() {
             </>
           )}
 
-          {/* student grades detail view */}
+          {/* Student grades detail view */}
           {tab === "students" && selectedStudent && (
             <>
               <div className="page-header">
@@ -782,16 +798,12 @@ export default function Admin() {
                     ← Back to students
                   </button>
                   <h1 className="page-title">{selectedStudent.full_name}</h1>
-                  <p className="page-sub">
-                    {selectedStudent.email} · Grade history
-                  </p>
+                  <p className="page-sub">{selectedStudent.email} · Grade history</p>
                 </div>
               </div>
               <div className="card">
                 {studentGrades.length === 0 ? (
-                  <div className="empty">
-                    No submissions yet for this student.
-                  </div>
+                  <div className="empty">No submissions yet for this student.</div>
                 ) : (
                   <table className="table">
                     <thead>
@@ -809,21 +821,69 @@ export default function Admin() {
                         return (
                           <tr key={i}>
                             <td style={{ fontWeight: 600 }}>{g.quiz?.title}</td>
-                            <td style={{ color: "#5B7C88" }}>
-                              {g.quiz?.subject}
-                            </td>
+                            <td style={{ color: "#5B7C88" }}>{g.quiz?.subject}</td>
+                            <td>{g.score}/{g.total}</td>
                             <td>
-                              {g.score}/{g.total}
-                            </td>
-                            <td>
-                              <span
-                                className={`badge ${pct >= 80 ? "badge-high" : pct >= 50 ? "badge-mid" : "badge-low"}`}
-                              >
+                              <span className={`badge ${pct >= 80 ? "badge-high" : pct >= 50 ? "badge-mid" : "badge-low"}`}>
                                 {pct}%
                               </span>
                             </td>
                             <td style={{ color: "#A8BFBF" }}>
                               {new Date(g.submitted_at).toLocaleDateString()}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* ═══ GLOBAL PLATFORM GRADES TAB ═══ */}
+          {tab === "grades" && (
+            <>
+              <div className="page-header">
+                <div>
+                  <h1 className="page-title">Platform Grades</h1>
+                  <p className="page-sub">Global performance metrics and student history tracking.</p>
+                </div>
+                <button className="btn btn-outline"><Download size={14} /> Export CSV</button>
+              </div>
+              <div className="card">
+                {submissions.length === 0 ? (
+                  <div className="empty">No grading records stored yet on the platform.</div>
+                ) : (
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Student</th>
+                        <th>Email</th>
+                        <th>Quiz</th>
+                        <th>Subject</th>
+                        <th>Score</th>
+                        <th>%</th>
+                        <th>Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {submissions.map((s, i) => {
+                        const pct = Math.round((s.score / s.total) * 100);
+                        return (
+                          <tr key={i}>
+                            <td style={{ fontWeight: 600 }}>{s.student?.full_name || "—"}</td>
+                            <td style={{ color: "#5B7C88" }}>{s.student?.email || "—"}</td>
+                            <td style={{ fontWeight: 600 }}>{s.quiz?.title || "—"}</td>
+                            <td style={{ color: "#5B7C88" }}>{s.quiz?.subject || "—"}</td>
+                            <td>{s.score}/{s.total}</td>
+                            <td>
+                              <span className={`badge ${pct >= 80 ? "badge-high" : pct >= 50 ? "badge-mid" : "badge-low"}`}>
+                                {pct}%
+                              </span>
+                            </td>
+                            <td style={{ color: "#A8BFBF" }}>
+                              {new Date(s.submitted_at).toLocaleDateString()}
                             </td>
                           </tr>
                         );
@@ -841,9 +901,7 @@ export default function Admin() {
               <div className="page-header">
                 <div>
                   <h1 className="page-title">Quizzes</h1>
-                  <p className="page-sub">
-                    All quizzes on the platform — create or delete.
-                  </p>
+                  <p className="page-sub">All quizzes on the platform — create or delete.</p>
                 </div>
                 <button className="btn btn-primary" onClick={openCreateQuiz}>
                   <Plus size={15} /> New quiz
@@ -855,55 +913,54 @@ export default function Admin() {
                 ) : quizzes.length === 0 ? (
                   <div className="empty">No quizzes yet.</div>
                 ) : (
-                  quizzes.map((q) => {
-                    const qSubs = submissions.filter((s) => s.quiz_id === q.id);
-                    const qAvg = qSubs.length
-                      ? Math.round(
-                          qSubs.reduce(
-                            (a, s) => a + (s.score / s.total) * 100,
-                            0,
-                          ) / qSubs.length,
-                        )
-                      : null;
-                    return (
-                      <div className="quiz-row" key={q.id}>
-                        <div>
-                          <div className="quiz-name">{q.title}</div>
-                          <div className="quiz-meta">
-                            {q.subject} · by {q.teacher?.full_name || "Admin"} ·{" "}
-                            {qSubs.length} submissions
-                            {qAvg !== null && ` · avg ${qAvg}%`}
-                          </div>
-                        </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 8,
-                            flexShrink: 0,
-                          }}
-                        >
-                          <span
-                            className={`badge ${q.status === "open" ? "badge-open" : "badge-closed"}`}
-                          >
-                            {q.status}
-                          </span>
-                          <button
-                            className="btn btn-outline btn-sm"
-                            onClick={() => toggleQuizStatus(q)}
-                          >
-                            {q.status === "open" ? "Close" : "Open"}
-                          </button>
-                          <button
-                            className="btn-icon danger"
-                            onClick={() => deleteQuiz(q.id)}
-                          >
-                            <Trash2 size={13} />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Title</th>
+                        <th>Subject</th>
+                        <th>Created By</th>
+                        <th>Submissions</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {quizzes.map((q) => {
+                        const qSubs = submissions.filter((s) => s.quiz_id === q.id);
+                        const qAvg = qSubs.length
+                          ? Math.round(qSubs.reduce((a, s) => a + (s.score / s.total) * 100, 0) / qSubs.length)
+                          : null;
+                        return (
+                          <tr key={q.id}>
+                            <td style={{ fontWeight: 600 }}>{q.title}</td>
+                            <td style={{ color: "#5B7C88" }}>{q.subject}</td>
+                            <td style={{ color: "#5B7C88" }}>{q.teacher?.full_name || "Admin"}</td>
+                            <td>{qSubs.length} response{qSubs.length !== 1 ? 's' : ''} {qAvg !== null && `(avg ${qAvg}%)`}</td>
+                            <td>
+                              <span className={`badge ${q.status === "open" ? "badge-open" : "badge-closed"}`}>
+                                {q.status}
+                              </span>
+                            </td>
+                            <td>
+                              <button
+                                className="btn btn-outline btn-sm"
+                                onClick={() => toggleQuizStatus(q)}
+                                style={{ marginRight: 8 }}
+                              >
+                                {q.status === "open" ? "Close" : "Open"}
+                              </button>
+                              <button
+                                className="btn-icon danger"
+                                onClick={() => deleteQuiz(q.id)}
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                 )}
               </div>
             </>
@@ -917,16 +974,10 @@ export default function Admin() {
           <div className="modal">
             <div className="modal-header">
               <div className="modal-title">
-                {editTarget ? "Edit" : "Add"}{" "}
-                {modalRole === "teacher" ? "Teacher" : "Student"}
+                {editTarget ? "Edit" : "Add"} {modalRole === "teacher" ? "Teacher" : "Student"}
               </div>
               <button
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  color: "#A8BFBF",
-                }}
+                style={{ background: "none", border: "none", cursor: "pointer", color: "#A8BFBF" }}
                 onClick={() => setShowUserModal(false)}
               >
                 <X size={18} />
@@ -938,9 +989,7 @@ export default function Admin() {
               <input
                 placeholder="Ahmed Benali"
                 value={formData.full_name}
-                onChange={(e) =>
-                  setFormData((f) => ({ ...f, full_name: e.target.value }))
-                }
+                onChange={(e) => setFormData((f) => ({ ...f, full_name: e.target.value }))}
               />
             </div>
 
@@ -952,9 +1001,7 @@ export default function Admin() {
                     type="email"
                     placeholder="ahmed@school.edu"
                     value={formData.email}
-                    onChange={(e) =>
-                      setFormData((f) => ({ ...f, email: e.target.value }))
-                    }
+                    onChange={(e) => setFormData((f) => ({ ...f, email: e.target.value }))}
                   />
                 </div>
                 <div className="field">
@@ -964,9 +1011,7 @@ export default function Admin() {
                       type={showPw ? "text" : "password"}
                       placeholder="Min. 6 characters"
                       value={formData.password}
-                      onChange={(e) =>
-                        setFormData((f) => ({ ...f, password: e.target.value }))
-                      }
+                      onChange={(e) => setFormData((f) => ({ ...f, password: e.target.value }))}
                     />
                     <button
                       className="pw-eye"
@@ -980,35 +1025,17 @@ export default function Admin() {
               </>
             )}
 
-            {editTarget && (
-              <p
-                style={{ fontSize: 12, color: "#A8BFBF", marginBottom: "1rem" }}
-              >
-                Email and password can be changed directly in Supabase →
-                Authentication → Users.
-              </p>
-            )}
+            
 
             {userError && <div className="error-msg">{userError}</div>}
             {userSuccess && <div className="success-msg">{userSuccess}</div>}
 
             <div className="modal-footer">
-              <button
-                className="btn btn-outline"
-                onClick={() => setShowUserModal(false)}
-              >
+              <button className="btn btn-outline" onClick={() => setShowUserModal(false)}>
                 Cancel
               </button>
-              <button
-                className="btn btn-primary"
-                disabled={userLoading}
-                onClick={saveUser}
-              >
-                {userLoading
-                  ? "Saving..."
-                  : editTarget
-                    ? "Save changes"
-                    : `Create ${modalRole}`}
+              <button className="btn btn-primary" disabled={userLoading} onClick={saveUser}>
+                {userLoading ? "Saving..." : editTarget ? "Save changes" : `Create ${modalRole}`}
               </button>
             </div>
           </div>
@@ -1022,33 +1049,20 @@ export default function Admin() {
             <div className="modal-header">
               <div className="modal-title">Create quiz</div>
               <button
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  color: "#A8BFBF",
-                }}
+                style={{ background: "none", border: "none", cursor: "pointer", color: "#A8BFBF" }}
                 onClick={() => setShowQuizModal(false)}
               >
                 <X size={18} />
               </button>
             </div>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "1rem",
-              }}
-            >
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
               <div className="field">
                 <label>Title</label>
                 <input
                   placeholder="e.g. Algebra Fundamentals"
                   value={quizDraft.title}
-                  onChange={(e) =>
-                    setQuizDraft((d) => ({ ...d, title: e.target.value }))
-                  }
+                  onChange={(e) => setQuizDraft((d) => ({ ...d, title: e.target.value }))}
                 />
               </div>
               <div className="field">
@@ -1056,147 +1070,51 @@ export default function Admin() {
                 <input
                   placeholder="e.g. Mathematics"
                   value={quizDraft.subject}
-                  onChange={(e) =>
-                    setQuizDraft((d) => ({ ...d, subject: e.target.value }))
-                  }
+                  onChange={(e) => setQuizDraft((d) => ({ ...d, subject: e.target.value }))}
                 />
               </div>
             </div>
 
-            <div
-              style={{
-                borderTop: "1px solid rgba(42,61,69,0.08)",
-                paddingTop: "1rem",
-              }}
-            >
+            <div style={{ borderTop: "1px solid rgba(42,61,69,0.08)", paddingTop: "1rem" }}>
               {quizDraft.questions.map((q, qi) => (
                 <div
                   key={q.id}
-                  style={{
-                    border: "1px solid rgba(42,61,69,0.1)",
-                    borderRadius: 10,
-                    padding: "1.25rem",
-                    marginBottom: "1rem",
-                    background: "#F4F7F6",
-                  }}
+                  style={{ border: "1px solid rgba(42,61,69,0.1)", borderRadius: 10, padding: "1.25rem", marginBottom: "1rem", background: "#F4F7F6" }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginBottom: 10,
-                      fontSize: 11,
-                      fontWeight: 700,
-                      color: "#A8BFBF",
-                      textTransform: "uppercase",
-                    }}
-                  >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10, fontSize: 11, fontWeight: 700, color: "#A8BFBF", textTransform: "uppercase" }}>
                     <span>Question {qi + 1}</span>
                     {quizDraft.questions.length > 1 && (
                       <button
                         className="btn-icon danger"
-                        onClick={() =>
-                          setQuizDraft((d) => ({
-                            ...d,
-                            questions: d.questions.filter((x) => x.id !== q.id),
-                          }))
-                        }
+                        onClick={() => setQuizDraft((d) => ({ ...d, questions: d.questions.filter((x) => x.id !== q.id) }))}
                       >
                         <Trash2 size={13} />
                       </button>
                     )}
                   </div>
                   <input
-                    style={{
-                      width: "100%",
-                      padding: "9px 12px",
-                      background: "#fff",
-                      border: "1px solid rgba(42,61,69,0.15)",
-                      borderRadius: 8,
-                      fontSize: 13,
-                      fontFamily: "Mulish,sans-serif",
-                      outline: "none",
-                      marginBottom: 10,
-                    }}
+                    style={{ width: "100%", padding: "9px 12px", background: "#fff", border: "1px solid rgba(42,61,69,0.15)", borderRadius: 8, fontSize: 13, fontFamily: "Mulish,sans-serif", outline: "none", marginBottom: 10 }}
                     placeholder="Question text..."
                     value={q.text}
-                    onChange={(e) =>
-                      setQuizDraft((d) => ({
-                        ...d,
-                        questions: d.questions.map((x) =>
-                          x.id === q.id ? { ...x, text: e.target.value } : x,
-                        ),
-                      }))
-                    }
+                    onChange={(e) => setQuizDraft((d) => ({ ...d, questions: d.questions.map(x => x.id === q.id ? { ...x, text: e.target.value } : x) }))}
                   />
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "1fr 1fr",
-                      gap: 8,
-                    }}
-                  >
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                     {q.options.map((opt, oi) => (
-                      <div
-                        key={oi}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 8,
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: 11,
-                            fontWeight: 700,
-                            color: "#A8BFBF",
-                            width: 16,
-                          }}
-                        >
+                      <div key={oi} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: "#A8BFBF", width: 16 }}>
                           {["A", "B", "C", "D"][oi]}
                         </span>
                         <input
-                          style={{
-                            flex: 1,
-                            padding: "7px 10px",
-                            background: "#fff",
-                            border: "1px solid rgba(42,61,69,0.15)",
-                            borderRadius: 6,
-                            fontSize: 12,
-                            fontFamily: "Mulish,sans-serif",
-                            outline: "none",
-                          }}
+                          style={{ flex: 1, padding: "7px 10px", background: "#fff", border: "1px solid rgba(42,61,69,0.15)", borderRadius: 6, fontSize: 12, fontFamily: "Mulish,sans-serif", outline: "none" }}
                           placeholder={`Option ${["A", "B", "C", "D"][oi]}`}
                           value={opt}
-                          onChange={(e) =>
-                            setQuizDraft((d) => ({
-                              ...d,
-                              questions: d.questions.map((x) =>
-                                x.id === q.id
-                                  ? {
-                                      ...x,
-                                      options: x.options.map((o, i) =>
-                                        i === oi ? e.target.value : o,
-                                      ),
-                                    }
-                                  : x,
-                              ),
-                            }))
-                          }
+                          onChange={(e) => setQuizDraft((d) => ({ ...d, questions: d.questions.map(x => x.id === q.id ? { ...x, options: x.options.map((o, i) => i === oi ? e.target.value : o) } : x) }))}
                         />
                         <input
                           type="radio"
                           title="Mark correct"
                           checked={q.correct === oi}
-                          onChange={() =>
-                            setQuizDraft((d) => ({
-                              ...d,
-                              questions: d.questions.map((x) =>
-                                x.id === q.id ? { ...x, correct: oi } : x,
-                              ),
-                            }))
-                          }
+                          onChange={() => setQuizDraft((d) => ({ ...d, questions: d.questions.map(x => x.id === q.id ? { ...x, correct: oi } : x) }))}
                         />
                       </div>
                     ))}
@@ -1204,23 +1122,8 @@ export default function Admin() {
                 </div>
               ))}
               <button
-                style={{
-                  width: "100%",
-                  padding: "10px",
-                  border: "1.5px dashed rgba(42,61,69,0.2)",
-                  borderRadius: 8,
-                  background: "transparent",
-                  fontSize: 13,
-                  color: "#5B7C88",
-                  cursor: "pointer",
-                  fontFamily: "Mulish,sans-serif",
-                }}
-                onClick={() =>
-                  setQuizDraft((d) => ({
-                    ...d,
-                    questions: [...d.questions, newQuestionDraft()],
-                  }))
-                }
+                style={{ width: "100%", padding: "10px", border: "1.5px dashed rgba(42,61,69,0.2)", borderRadius: 8, background: "transparent", fontSize: 13, color: "#5B7C88", cursor: "pointer", fontFamily: "Mulish,sans-serif" }}
+                onClick={() => setQuizDraft((d) => ({ ...d, questions: [...d.questions, newQuestionDraft()] }))}
               >
                 + Add question
               </button>
@@ -1233,17 +1136,10 @@ export default function Admin() {
             )}
 
             <div className="modal-footer">
-              <button
-                className="btn btn-outline"
-                onClick={() => setShowQuizModal(false)}
-              >
+              <button className="btn btn-outline" onClick={() => setShowQuizModal(false)}>
                 Cancel
               </button>
-              <button
-                className="btn btn-primary"
-                disabled={quizLoading}
-                onClick={saveQuiz}
-              >
+              <button className="btn btn-primary" disabled={quizLoading} onClick={saveQuiz}>
                 {quizLoading ? "Publishing..." : "Publish quiz"}
               </button>
             </div>

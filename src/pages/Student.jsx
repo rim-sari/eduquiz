@@ -3,7 +3,7 @@ import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
 import {
   LogOut, ClipboardList, Star, CheckCircle,
-  ChevronRight, Download, BarChart2, FileText
+  ChevronRight, Download, BarChart2
 } from "lucide-react";
 import quizLogo from "../assets/quizLogo.png";
 
@@ -110,29 +110,12 @@ const css = `
   .empty { text-align: center; padding: 3rem; color: #A8BFBF; font-size: 14px; }
 `;
 
-const mockQuizzes = [
-  { id: 1, title: "Algebra Fundamentals", subject: "Mathematics", questions: 3, status: "open", submitted: false },
-  { id: 2, title: "The Solar System", subject: "Science", questions: 4, status: "open", submitted: true, score: 4, total: 4 },
-  { id: 3, title: "World War II", subject: "History", questions: 6, status: "closed", submitted: true, score: 4, total: 6 },
-  { id: 4, title: "French Grammar", subject: "Languages", questions: 8, status: "open", submitted: false },
-];
-
-const mockQuestions = [
-  { id: 1, text: "What is x in 2x + 4 = 12?", options: ["x = 2", "x = 4", "x = 6", "x = 8"], correct: 1 },
-  { id: 2, text: "Which expression equals (a+b)²?", options: ["a²+b²", "a²+2ab+b²", "2a+2b", "a²−b²"], correct: 1 },
-  { id: 3, text: "Simplify: 3(x+2) − x", options: ["2x+6", "4x+6", "2x+2", "3x+6"], correct: 0 },
-];
-
-const mockGrades = [
-  { quiz: "The Solar System", subject: "Science", score: 4, total: 4, date: "May 18, 2026", pct: 100 },
-  { quiz: "World War II", subject: "History", score: 4, total: 6, date: "May 15, 2026", pct: 67 },
-];
-
 export default function Student() {
   const navigate = useNavigate();
   const [tab, setTab] = useState("dashboard");
   const [user, setUser] = useState({ name: "", email: "" });
-  const [quizzes, setQuizzes] = useState(mockQuizzes);
+  const [quizzes, setQuizzes] = useState([]);
+  const [grades, setGrades] = useState([]);
   const [activeQuiz, setActiveQuiz] = useState(null);
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
@@ -148,18 +131,24 @@ export default function Student() {
     navigate("/login");
   }
 
-  function openQuiz(q) { setActiveQuiz(q); setAnswers({}); setSubmitted(false); }
+  function openQuiz(q) { 
+    setActiveQuiz(q); 
+    setAnswers({}); 
+    setSubmitted(false); 
+  }
 
   function submitQuiz() {
-    const score = mockQuestions.filter(q => answers[q.id] === q.correct).length;
+    if (!activeQuiz || !activeQuiz.questions) return;
+    
+    const score = activeQuiz.questions.filter(q => answers[q.id] === q.correct).length;
     setQuizzes(prev => prev.map(q =>
-      q.id === activeQuiz.id ? { ...q, submitted: true, score, total: mockQuestions.length } : q
+      q.id === activeQuiz.id ? { ...q, submitted: true, score, total: activeQuiz.questions.length } : q
     ));
     setSubmitted(true);
   }
 
-  const avgPct = mockGrades.length
-    ? Math.round(mockGrades.reduce((a, g) => a + g.pct, 0) / mockGrades.length) : 0;
+  const avgPct = grades.length
+    ? Math.round(grades.reduce((a, g) => a + g.pct, 0) / grades.length) : 0;
   const pending = quizzes.filter(q => q.status === "open" && !q.submitted);
 
   const tabs = [
@@ -229,7 +218,7 @@ export default function Student() {
                 <div className="quiz-row" key={q.id}>
                   <div>
                     <div className="quiz-name">{q.title}</div>
-                    <div className="quiz-meta">{q.subject} · {q.questions} questions</div>
+                    <div className="quiz-meta">{q.subject} · {q.questions?.length || 0} questions</div>
                   </div>
                   <div className="quiz-actions">
                     <span className="badge badge-open">Open</span>
@@ -245,19 +234,23 @@ export default function Student() {
                 <span className="card-title">Recent grades</span>
                 <button className="btn btn-outline btn-sm" onClick={() => setTab("grades")}>View all</button>
               </div>
-              <table className="table">
-                <thead><tr><th>Quiz</th><th>Subject</th><th>Score</th><th>Date</th></tr></thead>
-                <tbody>
-                  {mockGrades.map((g, i) => (
-                    <tr key={i}>
-                      <td style={{ fontWeight: 600 }}>{g.quiz}</td>
-                      <td style={{ color: "#5B7C88" }}>{g.subject}</td>
-                      <td><span className={`badge ${g.pct >= 80 ? "badge-high" : g.pct >= 50 ? "badge-mid" : "badge-low"}`}>{g.score}/{g.total} — {g.pct}%</span></td>
-                      <td style={{ color: "#A8BFBF" }}>{g.date}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              {grades.length === 0 ? (
+                <div className="empty"><p>No grades recorded yet.</p></div>
+              ) : (
+                <table className="table">
+                  <thead><tr><th>Quiz</th><th>Subject</th><th>Score</th><th>Date</th></tr></thead>
+                  <tbody>
+                    {grades.map((g, i) => (
+                      <tr key={i}>
+                        <td style={{ fontWeight: 600 }}>{g.quiz}</td>
+                        <td style={{ color: "#5B7C88" }}>{g.subject}</td>
+                        <td><span className={`badge ${g.pct >= 80 ? "badge-high" : g.pct >= 50 ? "badge-mid" : "badge-low"}`}>{g.score}/{g.total} — {g.pct}%</span></td>
+                        <td style={{ color: "#A8BFBF" }}>{g.date}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </>
         )}
@@ -269,11 +262,13 @@ export default function Student() {
               <p className="page-sub">All quizzes assigned to you.</p>
             </div>
             <div className="card">
-              {quizzes.map(q => (
+              {quizzes.length === 0 ? (
+                <div className="empty"><p>No quizzes available.</p></div>
+              ) : quizzes.map(q => (
                 <div className="quiz-row" key={q.id}>
                   <div>
                     <div className="quiz-name">{q.title}</div>
-                    <div className="quiz-meta">{q.subject} · {q.questions} questions</div>
+                    <div className="quiz-meta">{q.subject} · {q.questions?.length || 0} questions</div>
                   </div>
                   <div className="quiz-actions">
                     {q.submitted ? (
@@ -309,26 +304,30 @@ export default function Student() {
                 <span className="card-title">Grade history</span>
                 <button className="btn btn-outline btn-sm"><Download size={13} /> Export</button>
               </div>
-              <table className="table">
-                <thead><tr><th>Quiz</th><th>Subject</th><th>Score</th><th>%</th><th>Date</th></tr></thead>
-                <tbody>
-                  {mockGrades.map((g, i) => (
-                    <tr key={i}>
-                      <td style={{ fontWeight: 600 }}>{g.quiz}</td>
-                      <td style={{ color: "#5B7C88" }}>{g.subject}</td>
-                      <td>{g.score}/{g.total}</td>
-                      <td><span className={`badge ${g.pct >= 80 ? "badge-high" : g.pct >= 50 ? "badge-mid" : "badge-low"}`}>{g.pct}%</span></td>
-                      <td style={{ color: "#A8BFBF" }}>{g.date}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              {grades.length === 0 ? (
+                <div className="empty"><p>No history available.</p></div>
+              ) : (
+                <table className="table">
+                  <thead><tr><th>Quiz</th><th>Subject</th><th>Score</th><th>%</th><th>Date</th></tr></thead>
+                  <tbody>
+                    {grades.map((g, i) => (
+                      <tr key={i}>
+                        <td style={{ fontWeight: 600 }}>{g.quiz}</td>
+                        <td style={{ color: "#5B7C88" }}>{g.subject}</td>
+                        <td>{g.score}/{g.total}</td>
+                        <td><span className={`badge ${g.pct >= 80 ? "badge-high" : g.pct >= 50 ? "badge-mid" : "badge-low"}`}>{g.pct}%</span></td>
+                        <td style={{ color: "#A8BFBF" }}>{g.date}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </>
         )}
       </div>
 
-      {activeQuiz && (
+      {activeQuiz && activeQuiz.questions && (
         <div className="modal-overlay" onClick={() => !submitted && setActiveQuiz(null)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div className="modal-title">{activeQuiz.title}</div>
@@ -336,11 +335,11 @@ export default function Student() {
               <>
                 <div style={{ background: "#EBF5EE", borderRadius: 12, padding: "1.5rem", textAlign: "center", marginBottom: "1.5rem" }}>
                   <div style={{ fontSize: 42, fontFamily: "Cormorant Garamond,serif", fontWeight: 700, color: "#2A7A45" }}>
-                    {mockQuestions.filter(q => answers[q.id] === q.correct).length}/{mockQuestions.length}
+                    {activeQuiz.questions.filter(q => answers[q.id] === q.correct).length}/{activeQuiz.questions.length}
                   </div>
                   <p style={{ fontSize: 14, color: "#2A7A45", marginTop: 4 }}>Submitted successfully</p>
                 </div>
-                {mockQuestions.map((q, qi) => (
+                {activeQuiz.questions.map((q, qi) => (
                   <div className="q-block" key={q.id}>
                     <p className="q-text">{qi + 1}. {q.text}</p>
                     {q.options.map((opt, oi) => (
@@ -356,7 +355,7 @@ export default function Student() {
               </>
             ) : (
               <>
-                {mockQuestions.map((q, qi) => (
+                {activeQuiz.questions.map((q, qi) => (
                   <div className="q-block" key={q.id}>
                     <p className="q-text">{qi + 1}. {q.text}</p>
                     {q.options.map((opt, oi) => (
@@ -366,7 +365,7 @@ export default function Student() {
                 ))}
                 <div className="modal-footer">
                   <button className="btn btn-outline" onClick={() => setActiveQuiz(null)}>Cancel</button>
-                  <button className="btn btn-primary" disabled={Object.keys(answers).length < mockQuestions.length} onClick={submitQuiz}>Submit quiz</button>
+                  <button className="btn btn-primary" disabled={Object.keys(answers).length < activeQuiz.questions.length} onClick={submitQuiz}>Submit quiz</button>
                 </div>
               </>
             )}

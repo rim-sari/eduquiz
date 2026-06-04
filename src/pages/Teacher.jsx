@@ -3,7 +3,7 @@ import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
 import {
   LogOut, ClipboardList, Star, BarChart2,
-  BookOpen, Download, Plus, Trash2, Eye, X, User
+  Users, Download, Plus, Trash2, Eye, X, User, Home
 } from "lucide-react";
 import quizLogo from "../assets/quizLogo.png";
 
@@ -13,7 +13,7 @@ const css = `
 
   .top-nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-    display: flex; align-items: center;
+    display: flex; align-items: center; justify-content: space-between;
     padding: 0 3.5rem; height: 66px;
     background: rgba(253,254,254,0.75);
     backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
@@ -25,27 +25,82 @@ const css = `
     pointer-events: none;
   }
   .top-nav img { height: 115px; width: auto; display: block; }
+  
+  .nav-right { display: flex; align-items: center; gap: 1.5rem; }
+  .logout-btn {
+    display: flex; align-items: center; gap: 7px;
+    padding: 8px 20px; background: #2A3D45; color: #fff;
+    border: none; border-radius: 40px; font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: 'Mulish', sans-serif; transition: all 0.2s;
+  }
+  .logout-btn:hover { background: #3E5A64; transform: translateY(-1px); }
 
   .layout { display: flex; padding-top: 66px; min-height: 100vh; }
 
+  /* Structure globale de la Sidebar */
   .sidebar {
-    width: 240px; min-height: calc(100vh - 66px);
+    width: 240px; 
+    height: calc(100vh - 66px);
     background: #2A3D45;
     position: fixed; top: 66px; left: 0; bottom: 0;
-    display: flex; flex-direction: column; z-index: 100;
+    z-index: 100;
+    padding: 24px 16px;
+    display: block;
   }
-  .sidebar-user { padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid rgba(235,245,238,0.1); }
-  .sidebar-avatar { width: 40px; height: 40px; border-radius: 50%; background: rgba(235,245,238,0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 10px; color: #EBF5EE; }
-  .sidebar-name { font-size: 14px; font-weight: 600; color: #EBF5EE; margin-bottom: 2px; }
-  .sidebar-email { font-size: 11px; color: rgba(235,245,238,0.45); }
-  .sidebar-role-badge { display: inline-block; margin-top: 8px; padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; background: rgba(232,184,109,0.18); color: #E8C87A; border: 1px solid rgba(232,184,109,0.28); }
-  .sidebar-nav { flex: 1; padding: 1rem 0; }
-  .nav-item { display: flex; align-items: center; gap: 11px; padding: 11px 1.5rem; font-size: 14px; font-weight: 500; color: rgba(235,245,238,0.55); cursor: pointer; border-left: 3px solid transparent; transition: all 0.15s; }
-  .nav-item:hover { color: #EBF5EE; background: rgba(235,245,238,0.06); }
-  .nav-item.active { color: #EBF5EE; border-left-color: #E8C87A; background: rgba(235,245,238,0.09); }
-  .sidebar-bottom { padding: 1rem 1.5rem; border-top: 1px solid rgba(235,245,238,0.1); }
-  .logout-btn { display: flex; align-items: center; gap: 9px; width: 100%; padding: 10px 13px; background: rgba(235,245,238,0.07); border: 1px solid rgba(235,245,238,0.12); border-radius: 9px; color: rgba(235,245,238,0.65); font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Mulish', sans-serif; transition: all 0.15s; }
-  .logout-btn:hover { background: rgba(235,245,238,0.13); color: #EBF5EE; }
+  
+  /* Bloc Utilisateur Sans Conflit */
+  .sidebar-user { 
+    display: block;
+    width: 100%;
+    padding-bottom: 20px; 
+    border-bottom: 1px solid rgba(235,245,238,0.1);
+    margin-bottom: 24px;
+  }
+  .sidebar-avatar { 
+    width: 44px; height: 44px; border-radius: 50%; 
+    background: rgba(235,245,238,0.15); 
+    display: flex; align-items: center; justify-content: center; 
+    margin-bottom: 12px; color: #EBF5EE; 
+  }
+  .sidebar-name { font-size: 16px; font-weight: 600; color: #EBF5EE; margin-bottom: 4px; display: block; line-height: 1.2; }
+  .sidebar-email { font-size: 12px; color: rgba(235,245,238,0.45); margin-bottom: 12px; display: block; word-break: break-all; line-height: 1.2; }
+  .sidebar-role-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; background: rgba(232,184,109,0.15); color: #E8C87A; border: 1px solid rgba(232,184,109,0.25); }
+  
+  /* Conteneur des Onglets de Navigation */
+  .sidebar-nav { 
+    display: block;
+    width: 100%;
+  }
+  
+  /* Design exact de vos éléments de navigation */
+  .nav-item { 
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 14px !important; 
+    padding: 12px 16px !important; 
+    margin-bottom: 6px;
+    font-size: 15px; 
+    font-weight: 500; 
+    color: rgba(235,245,238,0.65); 
+    cursor: pointer; 
+    background: transparent;
+    border: none; 
+    width: 100%; 
+    border-radius: 12px;
+    font-family: 'Mulish', sans-serif; 
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  .nav-item:hover { color: #EBF5EE; background: rgba(235,245,238,0.05); }
+  .nav-item.active { 
+    color: #EBF5EE; 
+    background: rgba(253,254,254,0.12); 
+    font-weight: 600; 
+  }
+  .nav-item svg { flex-shrink: 0 !important; color: inherit; display: block !important; }
+  .nav-item span { display: inline-block !important; color: inherit; white-space: nowrap; line-height: 1; }
 
   .main { margin-left: 240px; flex: 1; padding: 2.5rem; }
   .page-header { margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-start; }
@@ -112,32 +167,16 @@ const css = `
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 `;
 
-const mockQuizzes = [
-  { id: 1, title: "Algebra Fundamentals", subject: "Mathematics", questions: 5, status: "open", submissions: 18, avg: 76 },
-  { id: 2, title: "The Solar System", subject: "Science", questions: 4, status: "open", submissions: 22, avg: 88 },
-  { id: 3, title: "World War II Timeline", subject: "History", questions: 6, status: "closed", submissions: 25, avg: 62 },
-];
-
-const mockSubmissions = [
-  { student: "Ahmed B.", quiz: "Algebra Fundamentals", score: 4, total: 5, pct: 80, date: "May 19" },
-  { student: "Sara M.", quiz: "Algebra Fundamentals", score: 3, total: 5, pct: 60, date: "May 19" },
-  { student: "Youssef K.", quiz: "The Solar System", score: 4, total: 4, pct: 100, date: "May 18" },
-  { student: "Nadia R.", quiz: "The Solar System", score: 3, total: 4, pct: 75, date: "May 18" },
-  { student: "Ahmed B.", quiz: "World War II Timeline", score: 4, total: 6, pct: 67, date: "May 15" },
-];
-
-const mockClasses = [
-  { id: 1, name: "Math 10-A", students: 24 },
-  { id: 2, name: "Science 9-B", students: 19 },
-];
-
 function newQ() { return { id: Date.now(), text: "", options: ["", "", "", ""], correct: 0 }; }
 
 export default function Teacher() {
   const navigate = useNavigate();
   const [tab, setTab] = useState("dashboard");
   const [user, setUser] = useState({ name: "", email: "" });
-  const [quizzes, setQuizzes] = useState(mockQuizzes);
+  const [quizzes, setQuizzes] = useState([]);
+  const [submissions, setSubmissions] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [grades, setGrades] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
   const [showSubs, setShowSubs] = useState(null);
   const [draft, setDraft] = useState({ title: "", subject: "", questions: [newQ()] });
@@ -148,11 +187,14 @@ export default function Teacher() {
     });
   }, []);
 
-  async function logout() { await supabase.auth.signOut(); navigate("/login"); }
+  async function logout() { 
+    await supabase.auth.signOut(); 
+    navigate("/login"); 
+  }
 
   function saveQuiz() {
     if (!draft.title.trim()) return;
-    setQuizzes(p => [...p, { ...draft, id: Date.now(), status: "open", submissions: 0, avg: 0 }]);
+    setQuizzes(p => [...p, { ...draft, id: Date.now(), status: "open", submissions: 0, avg: 0, questionsCount: draft.questions.length }]);
     setShowCreate(false);
     setDraft({ title: "", subject: "", questions: [newQ()] });
   }
@@ -161,15 +203,18 @@ export default function Teacher() {
     setQuizzes(p => p.map(q => q.id === id ? { ...q, status: q.status === "open" ? "closed" : "open" } : q));
   }
 
-  const totalSubs = quizzes.reduce((a, q) => a + q.submissions, 0);
-  const avgScore = quizzes.length ? Math.round(quizzes.reduce((a, q) => a + q.avg, 0) / quizzes.length) : 0;
+  const totalSubs = quizzes.reduce((a, q) => a + (q.submissions || 0), 0);
+  const avgScore = quizzes.length ? Math.round(quizzes.reduce((a, q) => a + (q.avg || 0), 0) / quizzes.length) : 0;
 
+  // Icons fixed and mapped cleanly to match the image requirements
   const navItems = [
-    { id: "dashboard",   label: "Dashboard",    icon: <BarChart2 size={16} /> },
-    { id: "quizzes",     label: "My Quizzes",   icon: <ClipboardList size={16} /> },
-    { id: "submissions", label: "Submissions",  icon: <Star size={16} /> },
-    { id: "classes",     label: "Classes",      icon: <BookOpen size={16} /> },
+    { id: "dashboard",   label: "Dashboard",    icon: <Home size={20} /> },
+    { id: "quizzes",     label: "My Quizzes",   icon: <ClipboardList size={20} /> },
+    { id: "students",    label: "Students",     icon: <Users size={20} /> },
+    { id: "grades",      label: "Grades",       icon: <Star size={20} /> },
   ];
+
+  const modalFilteredSubs = showSubs ? submissions.filter(s => s.quiz === showSubs.title) : [];
 
   return (
     <>
@@ -178,30 +223,37 @@ export default function Teacher() {
 
       <nav className="top-nav">
         <img src={quizLogo} alt="EduQuiz" />
+        <div className="nav-right">
+          <button className="logout-btn" onClick={logout}>
+            <LogOut size={14} /> Sign out
+          </button>
+        </div>
       </nav>
 
       <div className="layout">
         <aside className="sidebar">
           <div className="sidebar-user">
             <div className="sidebar-avatar"><User size={18} /></div>
-            <div className="sidebar-name">{user.name}</div>
+            <div className="sidebar-name">{user.name || "Teacher Account"}</div>
             <div className="sidebar-email">{user.email}</div>
             <span className="sidebar-role-badge">Teacher</span>
           </div>
-          <nav className="sidebar-nav">
+          
+          <div className="sidebar-nav">
             {navItems.map(item => (
-              <div key={item.id} className={`nav-item ${tab === item.id ? "active" : ""}`} onClick={() => setTab(item.id)}>
-                {item.icon} {item.label}
-              </div>
+              <button 
+                key={item.id} 
+                className={`nav-item ${tab === item.id ? "active" : ""}`} 
+                onClick={() => setTab(item.id)}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </button>
             ))}
-          </nav>
-          <div className="sidebar-bottom">
-            <button className="logout-btn" onClick={logout}><LogOut size={15} /> Se déconnecter</button>
           </div>
         </aside>
 
         <main className="main">
-
           {tab === "dashboard" && (
             <>
               <div className="page-header">
@@ -215,18 +267,20 @@ export default function Teacher() {
                 <div className="stat-box"><div className="stat-label">Active quizzes</div><div className="stat-value">{quizzes.filter(q => q.status === "open").length}</div><div className="stat-sub">Currently open</div></div>
                 <div className="stat-box"><div className="stat-label">Total submissions</div><div className="stat-value">{totalSubs}</div><div className="stat-sub">Across all quizzes</div></div>
                 <div className="stat-box"><div className="stat-label">Avg. class score</div><div className="stat-value">{avgScore}%</div><div className="stat-sub">All quizzes</div></div>
-                <div className="stat-box"><div className="stat-label">Classes</div><div className="stat-value">{mockClasses.length}</div><div className="stat-sub">Assigned to you</div></div>
+                <div className="stat-box"><div className="stat-label">Students</div><div className="stat-value">{students.length}</div><div className="stat-sub">Registered students</div></div>
               </div>
               <div className="card">
                 <div className="card-header">
                   <span className="card-title">Your quizzes</span>
                   <button className="btn btn-primary btn-sm" onClick={() => setShowCreate(true)}><Plus size={13} /> Create</button>
                 </div>
-                {quizzes.map(q => (
+                {quizzes.length === 0 ? (
+                  <div className="empty"><p>No quizzes created yet.</p></div>
+                ) : quizzes.map(q => (
                   <div className="quiz-row" key={q.id}>
                     <div>
                       <div className="quiz-name">{q.title}</div>
-                      <div className="quiz-meta">{q.subject} · {q.questions} questions · {q.submissions} submissions · avg {q.avg}%</div>
+                      <div className="quiz-meta">{q.subject} · {q.questionsCount || q.questions?.length || 0} questions · {q.submissions} submissions · avg {q.avg}%</div>
                     </div>
                     <div className="quiz-actions">
                       <span className={`badge ${q.status === "open" ? "badge-open" : "badge-closed"}`}>{q.status}</span>
@@ -249,11 +303,13 @@ export default function Teacher() {
                 <button className="btn btn-primary" onClick={() => setShowCreate(true)}><Plus size={15} /> New quiz</button>
               </div>
               <div className="card">
-                {quizzes.map(q => (
+                {quizzes.length === 0 ? (
+                  <div className="empty"><p>No quizzes available.</p></div>
+                ) : quizzes.map(q => (
                   <div className="quiz-row" key={q.id}>
                     <div>
                       <div className="quiz-name">{q.title}</div>
-                      <div className="quiz-meta">{q.subject} · {q.questions} questions · {q.submissions} submissions</div>
+                      <div className="quiz-meta">{q.subject} · {q.questionsCount || q.questions?.length || 0} questions · {q.submissions} submissions</div>
                     </div>
                     <div className="quiz-actions">
                       <span className={`badge ${q.status === "open" ? "badge-open" : "badge-closed"}`}>{q.status}</span>
@@ -267,54 +323,62 @@ export default function Teacher() {
             </>
           )}
 
-          {tab === "submissions" && (
+          {tab === "students" && (
             <>
               <div className="page-header">
                 <div>
-                  <h1 className="page-title">Submissions</h1>
-                  <p className="page-sub">All student responses to your quizzes.</p>
+                  <h1 className="page-title">Students</h1>
+                  <p className="page-sub">Your registered system students.</p>
                 </div>
-                <button className="btn btn-outline"><Download size={14} /> Export CSV</button>
               </div>
               <div className="card">
-                <table className="table">
-                  <thead><tr><th>Student</th><th>Quiz</th><th>Score</th><th>%</th><th>Date</th></tr></thead>
-                  <tbody>
-                    {mockSubmissions.map((s, i) => (
-                      <tr key={i}>
-                        <td style={{ fontWeight: 600 }}>{s.student}</td>
-                        <td style={{ color: "#5B7C88" }}>{s.quiz}</td>
-                        <td>{s.score}/{s.total}</td>
-                        <td><span className={`badge ${s.pct >= 80 ? "badge-high" : s.pct >= 50 ? "badge-mid" : "badge-low"}`}>{s.pct}%</span></td>
-                        <td style={{ color: "#A8BFBF" }}>{s.date}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                {students.length === 0 ? (
+                  <div className="empty"><p>No student accounts linked yet.</p></div>
+                ) : (
+                  <table className="table">
+                    <thead><tr><th>Student Name</th><th>Email</th></tr></thead>
+                    <tbody>
+                      {students.map(s => (
+                        <tr key={s.id}>
+                          <td style={{ fontWeight: 600 }}>{s.name}</td>
+                          <td style={{ color: "#5B7C88" }}>{s.email}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </>
           )}
 
-          {tab === "classes" && (
+          {tab === "grades" && (
             <>
               <div className="page-header">
                 <div>
-                  <h1 className="page-title">Classes</h1>
-                  <p className="page-sub">Your assigned classes (view only).</p>
+                  <h1 className="page-title">Grades</h1>
+                  <p className="page-sub">Performance metrics and history records across quizzes.</p>
                 </div>
+                <button className="btn btn-outline"><Download size={14} /> Export CSV</button>
               </div>
               <div className="card">
-                <table className="table">
-                  <thead><tr><th>Class name</th><th>Students</th></tr></thead>
-                  <tbody>
-                    {mockClasses.map(c => (
-                      <tr key={c.id}>
-                        <td style={{ fontWeight: 600 }}>{c.name}</td>
-                        <td style={{ color: "#5B7C88" }}>{c.students} students</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                {grades.length === 0 ? (
+                  <div className="empty"><p>No grading records stored yet.</p></div>
+                ) : (
+                  <table className="table">
+                    <thead><tr><th>Student</th><th>Quiz</th><th>Score</th><th>%</th><th>Date</th></tr></thead>
+                    <tbody>
+                      {grades.map((g, i) => (
+                        <tr key={i}>
+                          <td style={{ fontWeight: 600 }}>{g.student}</td>
+                          <td style={{ color: "#5B7C88" }}>{g.quiz}</td>
+                          <td>{g.score}/{g.total}</td>
+                          <td><span className={`badge ${g.pct >= 80 ? "badge-high" : g.pct >= 50 ? "badge-mid" : "badge-low"}`}>{g.pct}%</span></td>
+                          <td style={{ color: "#A8BFBF" }}>{g.date}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </>
           )}
@@ -378,19 +442,23 @@ export default function Teacher() {
               <div className="modal-title">{showSubs.title} — Submissions</div>
               <button className="btn-icon" onClick={() => setShowSubs(null)}><X size={16} /></button>
             </div>
-            <table className="table">
-              <thead><tr><th>Student</th><th>Score</th><th>%</th><th>Date</th></tr></thead>
-              <tbody>
-                {mockSubmissions.filter(s => s.quiz === showSubs.title).map((s, i) => (
-                  <tr key={i}>
-                    <td style={{ fontWeight: 600 }}>{s.student}</td>
-                    <td>{s.score}/{s.total}</td>
-                    <td><span className={`badge ${s.pct >= 80 ? "badge-high" : s.pct >= 50 ? "badge-mid" : "badge-low"}`}>{s.pct}%</span></td>
-                    <td style={{ color: "#A8BFBF" }}>{s.date}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            {modalFilteredSubs.length === 0 ? (
+              <div className="empty"><p>No submissions found for this quiz.</p></div>
+            ) : (
+              <table className="table">
+                <thead><tr><th>Student</th><th>Score</th><th>%</th><th>Date</th></tr></thead>
+                <tbody>
+                  {modalFilteredSubs.map((s, i) => (
+                    <tr key={i}>
+                      <td style={{ fontWeight: 600 }}>{s.student}</td>
+                      <td>{s.score}/{s.total}</td>
+                      <td><span className={`badge ${s.pct >= 80 ? "badge-high" : s.pct >= 50 ? "badge-mid" : "badge-low"}`}>{s.pct}%</span></td>
+                      <td style={{ color: "#A8BFBF" }}>{s.date}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
             <div className="modal-footer">
               <button className="btn btn-outline"><Download size={13} /> Export</button>
               <button className="btn btn-primary" onClick={() => setShowSubs(null)}>Close</button>
